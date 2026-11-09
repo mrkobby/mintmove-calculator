@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123c2b"><title>MintMove Pricing Calculator</title>
+<style>
+:root{--g:#123c2b;--m:#b8e5c8;--ink:#17231d;--muted:#66736b;--line:#dce5df;--bg:#f4f7f5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--g);color:white;padding:22px 18px}header h1{margin:0;font-size:22px}header p{margin:5px 0 0;color:#d7e9dd;font-size:14px}
+main{max-width:720px;margin:auto;padding:14px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:13px}
+h2{margin:0 0 12px;font-size:17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{min-width:0}
+label{display:block;font-size:13px;font-weight:650;margin:0 0 5px}input[type=number]{width:100%;min-height:45px;border:1px solid #cbd8cf;border-radius:10px;padding:9px;font:inherit;background:white;color:var(--ink)}
+input:focus{outline:2px solid #75b98d}.hint,.note{color:var(--muted);font-size:12px;margin-top:5px}
+.check{display:flex;gap:9px;align-items:center;margin-top:12px;font-size:14px}.check input{width:19px;height:19px}
+.result{background:var(--g);color:white;border-radius:15px;padding:18px}.eyebrow{color:#cce4d4;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.total{font-size:36px;font-weight:800;margin:3px 0 13px}.rowline{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #ffffff2a;font-size:14px}.rowline strong{white-space:nowrap}
+button{border:0;border-radius:10px;padding:13px;font:700 15px system-ui;cursor:pointer}.secondary{background:#e7f0ea;color:var(--g);width:100%;margin-top:13px}
+.warning{background:#fff7e7;border:1px solid #f0dfb7;color:#654b17;border-radius:11px;padding:11px;font-size:13px;margin-top:12px}
+@media(max-width:350px){.grid{grid-template-columns:1fr}}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:5px 16px 22px}
+</style></head><body>
+<header><h1>MintMove Logistics</h1><p>Delivery pricing calculator · Ghana cedis (GH₵)</p></header>
+<main>
+<section class="card"><h2>1. Journey distance</h2><div class="grid">
+<div class="field"><label for="pickup">Truck to pickup (km)</label><input id="pickup" type="number" min="0" step=".1" value="0"></div>
+<div class="field"><label for="loaded">Pickup to delivery (km)</label><input id="loaded" type="number" min="0" step=".1" value="20"></div></div>
+<label class="check"><input id="includeReturn" type="checkbox"> Include empty return journey to operating base</label>
+<div class="field" style="margin-top:10px"><label for="back">Empty return distance (km)</label><input id="back" type="number" min="0" step=".1" value="20"><div class="hint">Count this only if the truck returns empty. Don't charge it if you secure a paying return job.</div></div>
+</section>
+<section class="card"><h2>2. Load details</h2><div class="grid">
+<div class="field"><label for="weight">Estimated load weight (kg)</label><input id="weight" type="number" min="0" value="500"></div>
+<div class="field"><label for="capacity">Verified payload capacity (kg)</label><input id="capacity" type="number" min="1" value="1000"></div>
+<div class="field"><label for="space">Cargo space used (%)</label><input id="space" type="number" min="0" max="100" value="50"></div>
+<div class="field"><label for="loadFee">Full-capacity load fee (GH₵)</label><input id="loadFee" type="number" min="0" step=".01" value="30"></div></div>
+<div class="hint">Load utilisation is whichever is higher: weight used or cargo space used. Confirm your truck's actual legal payload and usable cargo dimensions.</div></section>
+<section class="card"><h2>3. Your pricing rates</h2><div class="grid">
+<div class="field"><label for="base">Base booking fee (GH₵)</label><input id="base" type="number" min="0" step=".01" value="30"></div>
+<div class="field"><label for="rate">Rate per chargeable km (GH₵)</label><input id="rate" type="number" min="0" step=".01" value="5"></div>
+<div class="field"><label for="extras">Other agreed charges (GH₵)</label><input id="extras" type="number" min="0" step=".01" value="0"><div class="hint">For agreed extra labour, waiting time, tolls, etc.</div></div></div>
+<div class="warning"><b>Example starting figures only.</b> Replace them with rates based on your actual fuel, maintenance, tyres, driver and overhead costs.</div></section>
+<section class="result" aria-live="polite"><div class="eyebrow">Estimated customer quote</div><div class="total" id="total">GH₵150.00</div>
+<div class="rowline"><span>Chargeable distance</span><strong id="kmOut">20.0 km</strong></div>
+<div class="rowline"><span>Base booking fee</span><strong id="baseOut">GH₵30.00</strong></div>
+<div class="rowline"><span>Distance charge</span><strong id="distanceOut">GH₵100.00</strong></div>
+<div class="rowline"><span>Load utilisation</span><strong id="utilOut">50%</strong></div>
+<div class="rowline"><span>Load charge</span><strong id="loadOut">GH₵15.00</strong></div>
+<div class="rowline"><span>Other agreed charges</span><strong id="extrasOut">GH₵0.00</strong></div>
+<button class="secondary" id="copy">Copy quote breakdown</button></section>
+<p class="note">Planning estimate only. Confirm the load is within legal vehicle limits. Agree on loading, unloading, waiting and special-handling charges before accepting the job.</p>
+</main><footer>MintMove Logistics · Move with care. Deliver with trust.</footer>
+<script>
+const $=id=>document.getElementById(id), n=id=>Math.max(0,Number($(id).value)||0), cash=x=>'GH₵'+x.toFixed(2);let breakdown='';
+function calc(){
+ const km=n('pickup')+n('loaded')+($(('includeReturn')).checked?n('back'):0);
+ const cap=n('capacity'), weightUse=cap>0?n('weight')/cap:0, spaceUse=n('space')/100;
+ const util=Math.min(1,Math.max(weightUse,spaceUse)), base=n('base'), dist=km*n('rate'), load=util*n('loadFee'), extra=n('extras'), total=base+dist+load+extra;
+ $('total').textContent=cash(total);$('kmOut').textContent=km.toFixed(1)+' km';$('baseOut').textContent=cash(base);
+ $('distanceOut').textContent=cash(dist);$('utilOut').textContent=(util*100).toFixed(0)+'%';$('loadOut').textContent=cash(load);$('extrasOut').textContent=cash(extra);
+ breakdown=`MINTMOVE LOGISTICS — DELIVERY QUOTE\nChargeable distance: ${km.toFixed(1)} km\nBase booking fee: ${cash(base)}\nDistance charge: ${cash(dist)}\nLoad utilisation: ${(util*100).toFixed(0)}%\nLoad charge: ${cash(load)}\nOther agreed charges: ${cash(extra)}\nTOTAL: ${cash(total)}\n\nFinal price subject to confirmation of load, route and agreed services.`;
+}
+document.querySelectorAll('input').forEach(x=>x.addEventListener('input',calc));
+$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(breakdown)}catch(e){let t=document.createElement('textarea');t.value=breakdown;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}$('copy').textContent='Quote copied';setTimeout(()=>$('copy').textContent='Copy quote breakdown',1800)});
+calc();
+</script></body></html>
