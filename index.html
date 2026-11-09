@@ -28,10 +28,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:5px 16px 22px
 </section>
 <section class="card"><h2>2. Load details</h2><div class="grid">
 <div class="field"><label for="weight">Estimated load weight (kg)</label><input id="weight" type="number" min="0" value="500"></div>
-<div class="field"><label for="capacity">Verified payload capacity (kg)</label><input id="capacity" type="number" min="1" value="1000"></div>
+<div class="field"><label for="capacity">Verified load capacity (kg)</label><input id="capacity" disabled type="number" min="1" value="1000"></div>
 <div class="field"><label for="space">Cargo space used (%)</label><input id="space" type="number" min="0" max="100" value="50"></div>
 <div class="field"><label for="loadFee">Full-capacity load fee (GH₵)</label><input id="loadFee" type="number" min="0" step=".01" value="30"></div></div>
-<div class="hint">Load utilisation is whichever is higher: weight used or cargo space used. Confirm your truck's actual legal payload and usable cargo dimensions.</div></section>
 <section class="card"><h2>3. Your pricing rates</h2><div class="grid">
 <div class="field"><label for="base">Base booking fee (GH₵)</label><input id="base" type="number" min="0" step=".01" value="30"></div>
 <div class="field"><label for="rate">Rate per chargeable km (GH₵)</label><input id="rate" type="number" min="0" step=".01" value="5"></div>
@@ -45,8 +44,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:5px 16px 22px
 <div class="rowline"><span>Load charge</span><strong id="loadOut">GH₵15.00</strong></div>
 <div class="rowline"><span>Other agreed charges</span><strong id="extrasOut">GH₵0.00</strong></div>
 <button class="secondary" id="copy">Copy quote breakdown</button></section>
-<p class="note">Planning estimate only. Confirm the load is within legal vehicle limits. Agree on loading, unloading, waiting and special-handling charges before accepting the job.</p>
-</main><footer>MintMove Logistics · Move with care. Deliver with trust.</footer>
+</main><footer>MintMove Logistics</footer>
 <script>
 const $=id=>document.getElementById(id), n=id=>Math.max(0,Number($(id).value)||0), cash=x=>'GH₵'+x.toFixed(2);let breakdown='';
 function calc(){
